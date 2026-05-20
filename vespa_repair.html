@@ -24,6 +24,46 @@
       line-height: 1.6;
     }
 
+    /* ── Language Toggle ── */
+    .lang-toggle {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      z-index: 999;
+      display: flex;
+      gap: 6px;
+    }
+    .lang-btn {
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    .lang-btn.active {
+      background: #f9c74f;
+      color: #1a1a2e;
+    }
+    .lang-btn:not(.active) {
+      background: #3a3a5c;
+      color: rgba(255,255,255,0.75);
+    }
+    .lang-btn:not(.active):hover {
+      background: #4a4a7c;
+      color: white;
+    }
+
+    /* ── Language visibility ── */
+    [data-lang] { display: none; }
+    body.lang-en  [data-lang="en"]  { display: inline; }
+    body.lang-zh  [data-lang="zh"]  { display: inline; }
+    body.lang-en  [data-lang-block="en"]  { display: block; }
+    body.lang-zh  [data-lang-block="zh"]  { display: block; }
+    body.lang-en  [data-lang-flex="en"]  { display: flex; }
+    body.lang-zh  [data-lang-flex="zh"]  { display: flex; }
+
     /* ── Header ── */
     .header {
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
@@ -264,19 +304,33 @@
     }
   </style>
 </head>
-<body>
+<body class="lang-en">
+
+<!-- Language Toggle -->
+<div class="lang-toggle">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">English</button>
+  <button class="lang-btn" id="btn-zh" onclick="setLang('zh')">繁體中文</button>
+</div>
 
 <!-- Header -->
 <div class="header">
-  <a href="ulez_guide_v4.html" class="back-link">← Back to ULEZ Guide</a>
-  <h1>🔧 Vespa Repair Checklist</h1>
-  <p>2003 Piaggio 124cc — Maintenance & Repair Priority List</p>
+  <a href="ulez_guide_v4.html" class="back-link">
+    <span data-lang="en">← Back to ULEZ Guide</span>
+    <span data-lang="zh">← 返回 ULEZ 指南</span>
+  </a>
+  <h1>🔧 <span data-lang="en">Vespa Repair Checklist</span><span data-lang="zh">Vespa 維修清單</span></h1>
+  <p>
+    <span data-lang="en">2003 Piaggio 124cc — Maintenance &amp; Repair Priority List</span>
+    <span data-lang="zh">2003 Piaggio 124cc — 維修保養優先順序清單</span>
+  </p>
   <div class="plate-badge">LK53 JZE</div>
 </div>
 
 <!-- Photo Gallery -->
 <div class="section">
-  <div class="section-title">📸 Current Condition Photos</div>
+  <div class="section-title">
+    📸 <span data-lang="en">Current Condition Photos</span><span data-lang="zh">現況照片</span>
+  </div>
   <div class="gallery">
     <img src="vespa_full.webp"   alt="Vespa side view" onclick="openLightbox(this)" />
     <img src="vespa_rear.webp"   alt="Vespa rear view" onclick="openLightbox(this)" />
@@ -292,8 +346,15 @@
 <div class="section" style="padding-top:0">
   <div class="priority-block">
     <div class="priority-header urgent">
-      🔴 <span>Urgent — Do First</span>
-      <span class="priority-badge">3 items</span>
+      🔴
+      <span>
+        <span data-lang="en">Urgent — Do First</span>
+        <span data-lang="zh">緊急 — 優先處理</span>
+      </span>
+      <span class="priority-badge">
+        <span data-lang="en">3 items</span>
+        <span data-lang="zh">3 項</span>
+      </span>
     </div>
     <ul class="repair-list">
 
@@ -301,29 +362,54 @@
       <li class="repair-item">
         <div class="item-number urgent">1</div>
         <div class="item-content">
-          <div class="item-title">⚙️ Engine Tune — Spark Plug + Oil + Carburettor</div>
+          <div class="item-title">
+            ⚙️
+            <span data-lang="en">Engine Tune — Spark Plug + Oil + Carburettor</span>
+            <span data-lang="zh">引擎調整 — 換火星塞 + 換機油 + 調整化油器</span>
+          </div>
           <div class="item-desc">
-            Engine wear / carbon build-up / carburettor out of tune → NOx rises (possibly 0.20–0.25 g/km).
-            Tuning before the ULEZ emissions test significantly improves pass rate.
+            <span data-lang="en">Engine wear / carbon build-up / carburettor out of tune → NOx rises (possibly 0.20–0.25 g/km). Tuning before the ULEZ emissions test significantly improves pass rate.</span>
+            <span data-lang="zh">引擎老化 / 積碳 / 化油器失調 → NOx 升高，在 ULEZ 排放測試前做保養可大幅提高通過率。</span>
           </div>
           <div class="engine-flow">
-            <span class="result-bad">引擎老化 / 積碳 / 化油器失調 → NOx 升高（可能 0.20–0.25 g/km）</span><br/>
-            <span class="arrow">↓ 做保養</span><br/>
-            ① 換火星塞（約 £5–15，自己換）<br/>
-            ② 換機油（約 £20–30，自己換）<br/>
-            ③ 調整化油器（約 £30–50，找技師）— <strong>最重要！</strong><br/>
-            <span class="arrow">↓ 調整後</span><br/>
-            <span class="result-good">NOx 降回正常水平（估計 0.05–0.12 g/km）✅</span>
+            <span class="result-bad">
+              <span data-lang="en">Engine wear / carbon build-up / carburettor out of tune → NOx rises (possibly 0.20–0.25 g/km)</span>
+              <span data-lang="zh">引擎老化 / 積碳 / 化油器失調 → NOx 升高（可能 0.20–0.25 g/km）</span>
+            </span><br/>
+            <span class="arrow">
+              <span data-lang="en">↓ Service the bike</span>
+              <span data-lang="zh">↓ 做保養</span>
+            </span><br/>
+            <span data-lang="en">① Replace spark plug (approx. £5–15, DIY)</span>
+            <span data-lang="zh">① 換火星塞（約 £5–15，自己換）</span><br/>
+            <span data-lang="en">② Change engine oil (approx. £20–30, DIY)</span>
+            <span data-lang="zh">② 換機油（約 £20–30，自己換）</span><br/>
+            <span data-lang="en">③ Tune carburettor (approx. £30–50, mechanic) — <strong>Most important!</strong></span>
+            <span data-lang="zh">③ 調整化油器（約 £30–50，找技師）— <strong>最重要！</strong></span><br/>
+            <span class="arrow">
+              <span data-lang="en">↓ After tuning</span>
+              <span data-lang="zh">↓ 調整後</span>
+            </span><br/>
+            <span class="result-good">
+              <span data-lang="en">NOx drops to normal level (estimated 0.05–0.12 g/km) ✅</span>
+              <span data-lang="zh">NOx 降回正常水平（估計 0.05–0.12 g/km）✅</span>
+            </span>
           </div>
           <span class="item-cost">① £5–15</span>
           <span class="item-diy">DIY</span>
           <span class="item-cost">② £20–30</span>
           <span class="item-diy">DIY</span>
           <span class="item-cost">③ £30–50</span>
-          <span class="item-tech">Mechanic</span>
+          <span class="item-tech">
+            <span data-lang="en">Mechanic</span>
+            <span data-lang="zh">找技師</span>
+          </span>
           <div class="checkbox-wrap">
             <input type="checkbox" id="c1" />
-            <label for="c1">Completed</label>
+            <label for="c1">
+              <span data-lang="en">Completed</span>
+              <span data-lang="zh">已完成</span>
+            </label>
           </div>
         </div>
       </li>
@@ -332,16 +418,26 @@
       <li class="repair-item">
         <div class="item-number urgent">2</div>
         <div class="item-content">
-          <div class="item-title">⛽ Fuel Gauge Indicator — Replace</div>
+          <div class="item-title">
+            ⛽
+            <span data-lang="en">Fuel Gauge Indicator — Replace</span>
+            <span data-lang="zh">油表指示 — 需要更換</span>
+          </div>
           <div class="item-desc">
-            The fuel gauge is not working correctly. Needs replacement to avoid running out of fuel unexpectedly.
-            油表指示壞掉，需要更換，避免不知道油量。
+            <span data-lang="en">The fuel gauge is not working correctly. Needs replacement to avoid running out of fuel unexpectedly.</span>
+            <span data-lang="zh">油表指示壞掉，需要更換，避免不知道油量突然沒油。</span>
           </div>
           <span class="item-cost">Est. £15–40</span>
-          <span class="item-tech">Mechanic</span>
+          <span class="item-tech">
+            <span data-lang="en">Mechanic</span>
+            <span data-lang="zh">找技師</span>
+          </span>
           <div class="checkbox-wrap">
             <input type="checkbox" id="c2" />
-            <label for="c2">Completed</label>
+            <label for="c2">
+              <span data-lang="en">Completed</span>
+              <span data-lang="zh">已完成</span>
+            </label>
           </div>
         </div>
       </li>
@@ -350,16 +446,26 @@
       <li class="repair-item">
         <div class="item-number urgent">3</div>
         <div class="item-content">
-          <div class="item-title">💡 Front Left Indicator Light — Replace</div>
+          <div class="item-title">
+            💡
+            <span data-lang="en">Front Left Indicator Light — Replace</span>
+            <span data-lang="zh">前面左邊指示燈 — 需要更換</span>
+          </div>
           <div class="item-desc">
-            The front left indicator light needs replacing. A non-functioning indicator is an MOT failure point and a road safety issue.
-            前面左邊燈照要換，指示燈壞掉會導致 MOT 不過，也是行車安全問題。
+            <span data-lang="en">The front left indicator light needs replacing. A non-functioning indicator is an MOT failure point and a road safety issue.</span>
+            <span data-lang="zh">前面左邊指示燈壞掉，需要更換。指示燈故障會導致 MOT 不過，也是行車安全問題。</span>
           </div>
           <span class="item-cost">Est. £5–20</span>
-          <span class="item-diy">DIY possible</span>
+          <span class="item-diy">
+            <span data-lang="en">DIY possible</span>
+            <span data-lang="zh">可自行更換</span>
+          </span>
           <div class="checkbox-wrap">
             <input type="checkbox" id="c3" />
-            <label for="c3">Completed</label>
+            <label for="c3">
+              <span data-lang="en">Completed</span>
+              <span data-lang="zh">已完成</span>
+            </label>
           </div>
         </div>
       </li>
@@ -367,27 +473,44 @@
     </ul>
   </div>
 
-  <!-- 🟠 NOT URGENT -->
+  <!-- ⚪ NOT URGENT -->
   <div class="priority-block">
     <div class="priority-header low">
-      ⚪ <span>Not Urgent — When Budget Allows</span>
-      <span class="priority-badge">4 items</span>
+      ⚪
+      <span>
+        <span data-lang="en">Not Urgent — When Budget Allows</span>
+        <span data-lang="zh">不急 — 有預算再做</span>
+      </span>
+      <span class="priority-badge">
+        <span data-lang="en">4 items</span>
+        <span data-lang="zh">4 項</span>
+      </span>
     </div>
     <ul class="repair-list">
 
       <li class="repair-item">
         <div class="item-number low-item">1</div>
         <div class="item-content">
-          <div class="item-title">🪑 Seat / Saddle — Replace</div>
+          <div class="item-title">
+            🪑
+            <span data-lang="en">Seat / Saddle — Replace</span>
+            <span data-lang="zh">椅墊 — 更換</span>
+          </div>
           <div class="item-desc">
-            Current seat is cracked and worn (visible tape repair). Cosmetic issue but worth replacing for comfort and appearance.
-            椅墊已破裂（可見膠帶修補），影響外觀和舒適度，不急但建議更換。
+            <span data-lang="en">Current seat is cracked and worn (visible tape repair). Cosmetic issue but worth replacing for comfort and appearance.</span>
+            <span data-lang="zh">椅墊已破裂（可見膠帶修補），影響外觀和舒適度，不急但建議更換。</span>
           </div>
           <span class="item-cost">Est. £30–80</span>
-          <span class="item-diy">DIY possible</span>
+          <span class="item-diy">
+            <span data-lang="en">DIY possible</span>
+            <span data-lang="zh">可自行更換</span>
+          </span>
           <div class="checkbox-wrap">
             <input type="checkbox" id="c4" />
-            <label for="c4">Completed</label>
+            <label for="c4">
+              <span data-lang="en">Completed</span>
+              <span data-lang="zh">已完成</span>
+            </label>
           </div>
         </div>
       </li>
@@ -395,16 +518,26 @@
       <li class="repair-item">
         <div class="item-number low-item">2</div>
         <div class="item-content">
-          <div class="item-title">🛡️ Footboard / Lower Body Panel — Replace</div>
+          <div class="item-title">
+            🛡️
+            <span data-lang="en">Footboard / Lower Body Panel — Replace</span>
+            <span data-lang="zh">腳下外殼 — 更換</span>
+          </div>
           <div class="item-desc">
-            The lower body shell / footboard area has damage and wear. Cosmetic repair, not structurally critical.
-            腳下外殼有損壞，純外觀問題，不影響行車安全。
+            <span data-lang="en">The lower body shell / footboard area has damage and wear. Cosmetic repair, not structurally critical.</span>
+            <span data-lang="zh">腳下外殼有損壞，純外觀問題，不影響行車安全。</span>
           </div>
           <span class="item-cost">Est. £20–60</span>
-          <span class="item-diy">DIY possible</span>
+          <span class="item-diy">
+            <span data-lang="en">DIY possible</span>
+            <span data-lang="zh">可自行更換</span>
+          </span>
           <div class="checkbox-wrap">
             <input type="checkbox" id="c5" />
-            <label for="c5">Completed</label>
+            <label for="c5">
+              <span data-lang="en">Completed</span>
+              <span data-lang="zh">已完成</span>
+            </label>
           </div>
         </div>
       </li>
@@ -412,16 +545,26 @@
       <li class="repair-item">
         <div class="item-number low-item">3</div>
         <div class="item-content">
-          <div class="item-title">🔩 Exhaust Pipe — Replace (Rusted)</div>
+          <div class="item-title">
+            🔩
+            <span data-lang="en">Exhaust Pipe — Replace (Rusted)</span>
+            <span data-lang="zh">排氣管 — 更換（生鏽）</span>
+          </div>
           <div class="item-desc">
-            The exhaust pipe is visibly rusted. While not immediately dangerous, a severely rusted exhaust can affect performance and eventually fail MOT.
-            排氣管生鏽，目前不緊急，但嚴重生鏽會影響性能並可能導致 MOT 不過。
+            <span data-lang="en">The exhaust pipe is visibly rusted. While not immediately dangerous, a severely rusted exhaust can affect performance and eventually fail MOT.</span>
+            <span data-lang="zh">排氣管明顯生鏽，目前不緊急，但嚴重生鏽會影響性能並可能導致 MOT 不過。</span>
           </div>
           <span class="item-cost">Est. £40–120</span>
-          <span class="item-tech">Mechanic recommended</span>
+          <span class="item-tech">
+            <span data-lang="en">Mechanic recommended</span>
+            <span data-lang="zh">建議找技師</span>
+          </span>
           <div class="checkbox-wrap">
             <input type="checkbox" id="c6" />
-            <label for="c6">Completed</label>
+            <label for="c6">
+              <span data-lang="en">Completed</span>
+              <span data-lang="zh">已完成</span>
+            </label>
           </div>
         </div>
       </li>
@@ -429,16 +572,23 @@
       <li class="repair-item">
         <div class="item-number low-item">4</div>
         <div class="item-content">
-          <div class="item-title">🐝 Vespa Logo / Badge — Replace</div>
+          <div class="item-title">
+            🐝
+            <span data-lang="en">Vespa Logo / Badge — Replace</span>
+            <span data-lang="zh">Vespa Logo 標誌 — 更換</span>
+          </div>
           <div class="item-desc">
-            The Vespa logo badge is missing or damaged. Pure cosmetic — makes the bike look more complete.
-            Vespa 標誌缺失或損壞，純外觀，讓車看起來更完整。
+            <span data-lang="en">The Vespa logo badge is missing or damaged. Pure cosmetic — makes the bike look more complete.</span>
+            <span data-lang="zh">Vespa 標誌缺失或損壞，純外觀問題，更換後讓車看起來更完整。</span>
           </div>
           <span class="item-cost">Est. £5–15</span>
           <span class="item-diy">DIY</span>
           <div class="checkbox-wrap">
             <input type="checkbox" id="c7" />
-            <label for="c7">Completed</label>
+            <label for="c7">
+              <span data-lang="en">Completed</span>
+              <span data-lang="zh">已完成</span>
+            </label>
           </div>
         </div>
       </li>
@@ -447,7 +597,10 @@
   </div>
 
   <!-- Back button -->
-  <a href="ulez_guide_v4.html" class="back-btn">← Back to ULEZ Guide</a>
+  <a href="ulez_guide_v4.html" class="back-btn">
+    <span data-lang="en">← Back to ULEZ Guide</span>
+    <span data-lang="zh">← 返回 ULEZ 指南</span>
+  </a>
 </div>
 
 <!-- Lightbox -->
@@ -457,6 +610,19 @@
 </div>
 
 <script>
+  // Language toggle
+  function setLang(lang) {
+    document.body.className = 'lang-' + lang;
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+    localStorage.setItem('vespa_repair_lang', lang);
+  }
+
+  // Restore saved language
+  const savedLang = localStorage.getItem('vespa_repair_lang') || 'en';
+  setLang(savedLang);
+
+  // Lightbox
   function openLightbox(img) {
     document.getElementById('lightbox-img').src = img.src;
     document.getElementById('lightbox').classList.add('active');
