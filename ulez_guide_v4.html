@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LK53 JZF — ULEZ Guide</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f7f7f7;
+      color: #222;
+      line-height: 1.75;
+      font-size: 16px;
+    }
+
+    /* ── Language toggle via checkbox hack ── */
+    #lang-toggle { display: none; }
+
+    .lang-bar {
+      background: #222;
+      padding: 8px 16px;
+      text-align: right;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      align-items: center;
+    }
+    .lang-label {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+    /* Default (English active) */
+    .label-en {
+      background: #f5c518;
+      color: #000;
+    }
+    .label-zh {
+      background: #444;
+      color: #ccc;
+    }
+    /* When checkbox checked → Chinese active */
+    #lang-toggle:checked ~ .lang-bar .label-en {
+      background: #444;
+      color: #ccc;
+    }
+    #lang-toggle:checked ~ .lang-bar .label-zh {
+      background: #f5c518;
+      color: #000;
+    }
+
+    /* ── Content visibility ── */
+    /* Default: show English, hide Chinese */
+    .zh { display: none !important; }
+    .en { display: block; }
+    span.zh { display: none !important; }
+    span.en { display: inline; }
+
+    /* When checked: show Chinese, hide English */
+    #lang-toggle:checked ~ .content .zh { display: block !important; }
+    #lang-toggle:checked ~ .content .en { display: none !important; }
+    #lang-toggle:checked ~ .content span.zh { display: inline !important; }
+    #lang-toggle:checked ~ .content span.en { display: none !important; }
+
+    /* Also affect header and alert (outside .content) */
+    #lang-toggle:checked ~ .header .zh { display: block !important; }
+    #lang-toggle:checked ~ .header .en { display: none !important; }
+    #lang-toggle:checked ~ .header span.zh { display: inline !important; }
+    #lang-toggle:checked ~ .header span.en { display: none !important; }
+
+    /* ── Header ── */
+    .header {
+      background: #111;
+      color: white;
+      padding: 36px 20px 28px;
+      text-align: center;
+    }
+    .plate {
+      display: inline-block;
+      background: #f5c518;
+      color: #000;
+      font-size: 1.8rem;
+      font-weight: 900;
+      padding: 8px 28px;
+      border-radius: 6px;
+      letter-spacing: 4px;
+      border: 3px solid #000;
+    }
+    .header h1 { margin-top: 14px; font-size: 1.1rem; opacity: 0.85; font-weight: 400; }
+
+    /* ── Page ── */
+    .page { max-width: 780px; margin: 0 auto; padding: 28px 16px 60px; }
+
+    /* ── Alert urgent ── */
+    .alert-urgent {
+      background: white;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      border-left: 5px solid #ef4444;
+    }
+    .alert-urgent h2 { font-size: 1rem; margin-bottom: 10px; color: #ef4444; }
+    .alert-urgent p { font-size: 0.93rem; color: #444; margin-bottom: 8px; }
+    .btn-row { margin-top: 10px; }
+    .btn-row a {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      margin-right: 8px;
+      margin-top: 4px;
+    }
+    .btn-red  { background: #ef4444; color: white; }
+    .btn-dark { background: #111; color: white; }
+
+    /* ── Section ── */
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 28px 24px;
+      margin-bottom: 24px;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .step-badge {
+      background: #111;
+      color: white;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .section p { color: #444; margin-bottom: 12px; font-size: 0.95rem; }
+    .section ul { padding-left: 20px; color: #444; font-size: 0.95rem; }
+    .section ul li { margin-bottom: 8px; }
+
+    /* ── Info boxes ── */
+    .info-box {
+      border-radius: 8px;
+      padding: 13px 16px;
+      margin: 12px 0;
+      font-size: 0.92rem;
+    }
+    .info-box.blue   { background: #eff6ff; border-left: 4px solid #3b82f6; color: #1e40af; }
+    .info-box.green  { background: #f0fdf4; border-left: 4px solid #22c55e; color: #166534; }
+    .info-box.yellow { background: #fffbeb; border-left: 4px solid #f59e0b; color: #92400e; }
+
+    /* ── NOx compare ── */
+    .nox-compare {
+      display: flex;
+      gap: 10px;
+      margin: 14px 0;
+      flex-wrap: wrap;
+    }
+    .nox-card {
+      flex: 1 1 130px;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .nox-card .num   { font-size: 1.5rem; font-weight: 900; }
+    .nox-card .label { font-size: 0.76rem; margin-top: 4px; line-height: 1.4; }
+    .nox-card.bad    { background: #fef2f2; color: #991b1b; }
+    .nox-card.limit  { background: #eff6ff; color: #1e40af; }
+    .nox-card.good   { background: #f0fdf4; color: #166534; }
+
+    /* ── Links ── */
+    a { color: #2563eb; }
+    a:hover { text-decoration: underline; }
+    .link-row { margin-top: 10px; }
+    .link-row a {
+      display: inline-block;
+      background: #2563eb;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      margin-right: 8px;
+      margin-top: 4px;
+    }
+    .link-row a:hover { background: #1d4ed8; }
+    .link-row a.grey { background: #555; }
+    .link-row a.grey:hover { background: #333; }
+
+    /* ── Table ── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 12px 0; }
+    th { background: #111; color: white; padding: 9px 12px; text-align: left; font-weight: 600; }
+    td { padding: 9px 12px; border-bottom: 1px solid #eee; color: #444; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+
+    /* ── Method cards ── */
+    .method {
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .method-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .method-num {
+      background: #111;
+      color: white;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+      font-size: 0.9rem;
+    }
+    .method-title { font-weight: 700; font-size: 1rem; }
+    .method-cost  { font-size: 0.8rem; color: #888; margin-top: 2px; }
+    .method p, .method ul { font-size: 0.93rem; color: #555; }
+    .method ul { padding-left: 18px; }
+    .method ul li { margin-bottom: 6px; }
+
+    /* ── Result boxes ── */
+    .result-box {
+      margin-top: 12px;
+      padding: 11px 15px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .result-box.ok   { background: #f0fdf4; color: #166534; border-left: 4px solid #22c55e; }
+    .result-box.warn { background: #fffbeb; color: #92400e; border-left: 4px solid #f59e0b; }
+    .result-box.bad  { background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; }
+
+    /* ── Flow diagram ── */
+    .flow { margin: 14px 0; }
+    .flow-box {
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.88rem;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    .flow-box.red   { background: #fef2f2; color: #991b1b; }
+    .flow-box.green { background: #f0fdf4; color: #166534; font-weight: 600; }
+    .flow-arrow { color: #aaa; font-size: 0.95rem; padding: 2px 0 2px 16px; margin-bottom: 4px; }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: #eee; margin: 18px 0; }
+
+    /* ── Tip highlight ── */
+    .tip {
+      background: #f5c518;
+      color: #111;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: 12px 0;
+    }
+
+    /* ── Disabled method ── */
+    .method.disabled { opacity: 0.5; }
+    .method.disabled .method-num { background: #aaa; }
+
+    /* ── Footer ── */
+    .footer { text-align: center; font-size: 0.78rem; color: #aaa; margin-top: 36px; padding-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+<!-- Hidden checkbox for language toggle -->
+<input type="checkbox" id="lang-toggle" />
+
+<!-- Language Bar -->
+<div class="lang-bar">
+  <label class="lang-label label-en" for="lang-toggle">English</label>
+  <label class="lang-label label-zh" for="lang-toggle">繁體中文</label>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="plate">LK53 JZF</div>
+  <h1 class="en">2003 Piaggio 124cc — Complete ULEZ Guide</h1>
+  <h1 class="zh">2003 Piaggio 124cc — ULEZ 完整指南</h1>
+</div>
+
+<!-- All content wrapped so CSS sibling selector works -->
+<div class="content">
+<div class="page">
+
+  <!-- URGENT: Road Tax -->
+  <div class="alert-urgent">
+    <h2 class="en">🚨 Urgent: Road Tax Expired!</h2>
+    <h2 class="zh">🚨 緊急：車稅已過期！</h2>
+    <p class="en">Your road tax expired on <strong>17 May 2026</strong>. Even if you are not riding, keeping the vehicle on a public road without valid tax is illegal.</p>
+    <p class="zh">車稅於 <strong>2026年5月17日</strong> 到期，已過期。即使不騎，車輛停放公路上也屬違規。</p>
+    <p class="en">If you are not riding at the moment, apply for a <strong>SORN</strong> (Statutory Off Road Notification) to legally declare the vehicle off road until you receive the new V5C and renew the tax.</p>
+    <p class="zh">如果目前不騎，先申請 <strong>SORN（聲明不上路）</strong>，合法暫停使用，等 V5C 收到後再繳稅。</p>
+    <div class="btn-row">
+      <a class="btn-red" href="https://www.gov.uk/make-a-sorn" target="_blank">
+        <span class="en">Apply for SORN (if not riding)</span>
+        <span class="zh">申請 SORN（不騎先用這個）</span>
+      </a>
+      <a class="btn-dark" href="https://www.gov.uk/renew-vehicle-tax" target="_blank">
+        <span class="en">Renew Road Tax</span>
+        <span class="zh">繳車稅 Road Tax</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-badge">1</span>
+      <span class="en">What is the Problem?</span>
+      <span class="zh">問題是什麼？</span>
+    </div>
+    <p class="en">Riding in London, your motorcycle may need to pay a <strong>£12.50 ULEZ daily charge</strong> because ULEZ requires motorcycles to have NOx emissions ≤ 0.15 g/km. Your <strong>2003 Piaggio 124cc</strong> is a Euro 2 vehicle, which has a NOx limit of 0.3 g/km — theoretically above the ULEZ threshold.</p>
+    <p class="zh">在倫敦騎車，你的車可能需要每天繳 <strong>£12.50 ULEZ 費用</strong>，因為 ULEZ 要求摩托車的 NOx 排放量必須 ≤ 0.15 g/km。你的車是 <strong>2003年 Piaggio 124cc</strong>，屬於 Euro 2 標準，Euro 2 的 NOx 上限是 0.3 g/km，理論上超標。</p>
+
+    <div class="info-box blue">
+      <p class="en">💡 <strong>Don't worry!</strong> 0.3 g/km is the <em>maximum allowed</em> for Euro 2 — not your bike's actual emission. Just like a 70mph speed limit doesn't mean you always drive at 70mph. Your bike's real NOx could be as low as 0.05–0.12 g/km, well within the ULEZ limit!</p>
+      <p class="zh">💡 <strong>但別擔心！</strong> 0.3 g/km 是 Euro 2 的「最高允許值」，不是你的車實際排放的數字。就像速限 70mph，不代表你一定開 70mph。你的車實際 NOx 可能只有 0.05–0.12 g/km，完全符合標準！</p>
+    </div>
+
+    <div class="nox-compare">
+      <div class="nox-card bad">
+        <div class="num">0.3</div>
+        <div class="label">
+          <span class="en">g/km — Euro 2 max limit (worst case)</span>
+          <span class="zh">g/km — Euro 2 最高上限（最差情況）</span>
+        </div>
+      </div>
+      <div class="nox-card limit">
+        <div class="num">0.15</div>
+        <div class="label">
+          <span class="en">g/km — ULEZ limit (must be below this)</span>
+          <span class="zh">g/km — ULEZ 要求上限（必須低於這個）</span>
+        </div>
+      </div>
+      <div class="nox-card good">
+        <div class="num">0.05–0.12</div>
+        <div class="label">
+          <span class="en">g/km — Estimated actual for a well-maintained 124cc</span>
+          <span class="zh">g/km — 124cc 保養良好的實際排放（估計）</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="en">Check your vehicle plate on TfL's official tool first:</p>
+    <p class="zh">先去這裡查你的車牌，確認 TfL 系統怎麼說：</p>
+    <div class="link-row">
+      <a href="https://tfl.gov.uk/modes/driving/check-your-vehicle/" target="_blank">
+        <span class="en">TfL — Check your vehicle</span>
+        <span class="zh">TfL 查車牌是否需要付費</span>
+      </a>
+      <a class="grey" href="https://vehicleenquiry.service.gov.uk/" target="_blank">
+        <span class="en">DVLA — Vehicle enquiry</span>
+        <span class="zh">DVLA 查車輛登記資料</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-badge">2</span>
+      <span class="en">What is NOx?</span>
+      <span class="zh">NOx 是什麼？</span>
+    </div>
+
+    <p class="en"><strong>NOx = Nitrogen Oxides</strong>, a toxic gas produced when an engine burns fuel at high temperatures. The hotter and dirtier the engine, the more NOx it produces.</p>
+    <p class="zh"><strong>NOx = 氮氧化物</strong>，是引擎燃燒汽油時排出的有毒廢氣。溫度越高、引擎越髒，NOx 就越多。</p>
+
+    <p class="en"><strong>How it is produced:</strong></p>
+    <p class="zh"><strong>燃燒過程：</strong></p>
+    <div class="flow">
+      <div class="flow-box">
+        <span class="en">⛽ Fuel + 💨 Air (nitrogen + oxygen)</span>
+        <span class="zh">⛽ 汽油 + 💨 空氣（氮 + 氧）</span>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box">
+        <span class="en">🔥 High-temperature combustion in engine</span>
+        <span class="zh">🔥 引擎高溫燃燒</span>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box">
+        <span class="en">💧 Normal exhaust gases (CO₂ + H₂O)</span>
+        <span class="zh">💧 正常廢氣（CO₂ + H₂O）</span>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box red">
+        <span class="en">☠️ NOx — toxic by-product; more heat = more NOx</span>
+        <span class="zh">☠️ NOx — 有毒副產品，溫度越高越多</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="en"><strong>Factors that affect NOx levels:</strong></p>
+    <p class="zh"><strong>影響 NOx 多少的因素：</strong></p>
+    <table>
+      <tr>
+        <th><span class="en">Factor</span><span class="zh">因素</span></th>
+        <th><span class="en">NOx Increases ↑</span><span class="zh">NOx 增加 ↑</span></th>
+        <th><span class="en">NOx Decreases ↓</span><span class="zh">NOx 減少 ↓</span></th>
+      </tr>
+      <tr>
+        <td><span class="en">Combustion temperature</span><span class="zh">燃燒溫度</span></td>
+        <td><span class="en">Higher temperature</span><span class="zh">溫度越高</span></td>
+        <td><span class="en">Lower temperature</span><span class="zh">溫度越低</span></td>
+      </tr>
+      <tr>
+        <td><span class="en">Air-fuel mixture</span><span class="zh">空燃比</span></td>
+        <td><span class="en">Too much air (lean mixture)</span><span class="zh">空氣太多（稀薄混合）</span></td>
+        <td><span class="en">Correct mixture ratio</span><span class="zh">油氣比例正確</span></td>
+      </tr>
+      <tr>
+        <td><span class="en">Engine condition</span><span class="zh">引擎狀態</span></td>
+        <td><span class="en">Carbon build-up, worn spark plug</span><span class="zh">積碳、老化、火星塞舊</span></td>
+        <td><span class="en">Clean, well-maintained</span><span class="zh">乾淨、保養好</span></td>
+      </tr>
+      <tr>
+        <td><span class="en">Carburettor</span><span class="zh">化油器</span></td>
+        <td><span class="en">Poorly tuned</span><span class="zh">調校失準</span></td>
+        <td><span class="en">Correctly tuned</span><span class="zh">調校正確</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-badge">3</span>
+      <span class="en">Solutions (Follow in Order)</span>
+      <span class="zh">解決方案（按順序走）</span>
+    </div>
+
+    <!-- Method 1 -->
+    <div class="method">
+      <div class="method-header">
+        <div class="method-num">1</div>
+        <div>
+          <div class="method-title">
+            <span class="en">Check NOx Value on V5C Document</span>
+            <span class="zh">查 V5C 文件上的 NOx 數值</span>
+          </div>
+          <div class="method-cost">
+            <span class="en">Cost: Free</span>
+            <span class="zh">費用：免費</span>
+          </div>
+        </div>
+      </div>
+      <p class="en">Open your V5C and look for <strong>Section V.3</strong>. Check if there is a <strong>Nitrogen Oxides (NOx)</strong> value listed. If the value is ≤ 0.15 g/km, you can apply directly to TfL for exemption.</p>
+      <p class="zh">翻開 V5C，找 <strong>Section V.3</strong>，看有沒有 <strong>Nitrogen Oxides (NOx)</strong> 那一行。如果有數值且 ≤ 0.15 g/km，直接向 TfL 申請豁免。</p>
+      <div class="result-box bad">
+        <span class="en">❌ <strong>Result: Not applicable.</strong> Your V5C does not show a NOx value. Older vehicles from 2003 were not required to record this. Skip to Method 2.</span>
+        <span class="zh">❌ <strong>結果：走不通。</strong> 你的 V5C 沒有顯示 NOx 數值。2003 年的舊車那個年代不強制記錄，跳過，直接走方法二。</span>
+      </div>
+    </div>
+
+    <!-- Method 2 -->
+    <div class="method">
+      <div class="method-header">
+        <div class="method-num">2</div>
+        <div>
+          <div class="method-title">
+            <span class="en">Request a Certificate of Conformity (CoC) from Piaggio</span>
+            <span class="zh">向 Piaggio 申請 Certificate of Conformity（CoC）</span>
+          </div>
+          <div class="method-cost">
+            <span class="en">Cost: £0–50</span>
+            <span class="zh">費用：£0–50</span>
+          </div>
+        </div>
+      </div>
+      <p class="en">Contact Piaggio UK and request a <strong>Certificate of Conformity (CoC)</strong> for your vehicle. This document contains the official NOx value recorded at the time of manufacture.</p>
+      <p class="zh">聯絡 Piaggio UK，要求提供你這台車的 <strong>CoC（合規證書）</strong>，裡面有出廠時官方測試的 NOx 數值。</p>
+      <ul class="en">
+        <li>You will need: registration plate <strong>LK53 JZF</strong> + <strong>VIN number</strong> (found on your V5C)</li>
+        <li>State the reason: for TfL ULEZ exemption application</li>
+      </ul>
+      <ul class="zh">
+        <li>需要提供：車牌 <strong>LK53 JZF</strong> + <strong>VIN 碼</strong>（在 V5C 上）</li>
+        <li>說明用途：用於 TfL ULEZ 申請</li>
+      </ul>
+      <p style="font-size:0.9rem; color:#333; margin-top:12px;">
+        📞 <strong>00800 818 29800</strong>
+        <span class="en"> (Free from UK, Mon–Fri 08:00–17:00)</span>
+        <span class="zh">（英國免費，週一至週五 08:00–17:00）</span>
+      </p>
+      <div class="link-row">
+        <a href="https://www.piaggio.com/gb_EN/customer-care/" target="_blank">
+          <span class="en">Piaggio UK Customer Care</span>
+          <span class="zh">Piaggio UK 客服頁面</span>
+        </a>
+      </div>
+      <div class="result-box ok">
+        <span class="en">✅ <strong>If CoC shows NOx ≤ 0.15 g/km:</strong> Upload it to TfL and apply for exemption — free and permanent!</span>
+        <span class="zh">✅ <strong>如果 CoC 顯示 NOx ≤ 0.15 g/km：</strong> 直接上傳給 TfL 申請豁免，永久免費！</span>
+      </div>
+      <div class="result-box warn">
+        <span class="en">⚠️ <strong>If CoC shows the factory standard value (around 0.3 g/km):</strong> This means the factory figure does not meet ULEZ, but it does not mean your bike actually emits that much today. Proceed to Method 3 — tune the engine first, then test.</span>
+        <span class="zh">⚠️ <strong>如果 CoC 顯示 NOx 是出廠標準值（接近 0.3 g/km）：</strong> 出廠數值不達標，但不代表你的車現在實際排放這麼高。繼續走方法三，先調整引擎再測試。</span>
+      </div>
+    </div>
+
+    <!-- Method 3 -->
+    <div class="method">
+      <div class="method-header">
+        <div class="method-num">3</div>
+        <div>
+          <div class="method-title">
+            <span class="en">Tune the Engine First, Then Take an Official Emissions Test</span>
+            <span class="zh">先調整引擎，再去官方測試中心實測</span>
+          </div>
+          <div class="method-cost">
+            <span class="en">Tuning: approx. £50–80 | Test: £175 (only charged if you pass)</span>
+            <span class="zh">調整費用：約 £50–80｜測試費用：£175（通過才收費）</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="en">This is the most common approach. Tune the engine to reduce NOx, then take the official emissions test. Once you pass, the test centre uploads the result to TfL directly — <strong>permanent exemption</strong>.</p>
+      <p class="zh">這是市面上最多人走的方法。先把引擎調好，再去做實際排放測試。通過後直接上傳 TfL 系統，<strong>永久豁免</strong>。</p>
+
+      <div class="divider"></div>
+
+      <p class="en"><strong>Step A: Tune the engine to improve your chances of passing</strong></p>
+      <p class="zh"><strong>第一步：先做引擎調整（提高通過機率）</strong></p>
+
+      <div class="flow">
+        <div class="flow-box red">
+          <span class="en">Engine wear / carbon build-up / carburettor out of tune → NOx rises (possibly 0.20–0.25 g/km)</span>
+          <span class="zh">引擎老化 / 積碳 / 化油器失調 → NOx 升高（可能 0.20–0.25 g/km）</span>
+        </div>
+        <div class="flow-arrow">
+          ↓ <span class="en">Service the bike</span><span class="zh">做保養</span>
+        </div>
+        <div class="flow-box">
+          <span class="en">① Replace spark plug (approx. £5–15, DIY)</span>
+          <span class="zh">① 換火星塞（約 £5–15，自己換）</span>
+        </div>
+        <div class="flow-arrow">+</div>
+        <div class="flow-box">
+          <span class="en">② Change engine oil (approx. £20–30, DIY)</span>
+          <span class="zh">② 換機油（約 £20–30，自己換）</span>
+        </div>
+        <div class="flow-arrow">+</div>
+        <div class="flow-box">
+          <span class="en">③ Tune the carburettor (approx. £30–50, mechanic) — most important!</span>
+          <span class="zh">③ 調整化油器（約 £30–50，找技師）— 最重要！</span>
+        </div>
+        <div class="flow-arrow">
+          ↓ <span class="en">After tuning</span><span class="zh">調整後</span>
+        </div>
+        <div class="flow-box green">
+          <span class="en">NOx drops to normal level (estimated 0.05–0.12 g/km) ✅</span>
+          <span class="zh">NOx 降回正常水平（估計 0.05–0.12 g/km）✅</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="en"><strong>Step B: Book an official ULEZ emissions test</strong></p>
+      <p class="zh"><strong>第二步：去官方認可測試中心實測</strong></p>
+
+      <p class="en">The test takes 30 minutes. If you pass, you are exempt from ULEZ charges from the next working day.</p>
+      <p class="zh">測試只需 30 分鐘。通過後隔天起豁免 ULEZ 費用。</p>
+
+      <div class="tip">
+        <span class="en">💛 The Test Centre (Deptford) only charges £175 if your bike passes — no charge if it fails!</span>
+        <span class="zh">💛 The Test Centre（Deptford）只有通過才收 £175！沒通過不收錢。</span>
+      </div>
+
+      <table>
+        <tr>
+          <th><span class="en">Test Centre</span><span class="zh">測試中心</span></th>
+          <th><span class="en">Address</span><span class="zh">地址</span></th>
+          <th><span class="en">Phone</span><span class="zh">電話</span></th>
+          <th><span class="en">Fee</span><span class="zh">費用</span></th>
+        </tr>
+        <tr>
+          <td><a href="https://www.ulezbiketest.co.uk/" target="_blank">The Test Centre<br/>(Deptford)</a></td>
+          <td>193–197 Edward Place,<br/>Deptford, London SE8 5HD</td>
+          <td>0333 358 2666</td>
+          <td><span class="en">£175 (only if pass)</span><span class="zh">£175（通過才收費）</span></td>
+        </tr>
+        <tr>
+          <td><a href="https://www.uleztesting.co.uk/" target="_blank">ULEZ Testing UK Ltd<br/>(Morden)</a></td>
+          <td>Unit 2, Amenity Way,<br/>Morden, Surrey SM4 4AX</td>
+          <td>01438 941222</td>
+          <td><span class="en">£175 (regardless of result)</span><span class="zh">£175（不管通過與否）</span></td>
+        </tr>
+        <tr>
+          <td>Garfield Motor Company<br/>(Enfield)</td>
+          <td>Garfield Road, Ponders End,<br/>Enfield EN3 4RP</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Essex &amp; East London ULEZ Testing<br/>(Romford)</td>
+          <td>Church Road, Noak Hill,<br/>Romford RM4 1LD</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+      </table>
+
+      <div class="info-box green" style="margin-top:14px;">
+        <span class="en">💪 The majority of bikes sent for testing pass, because their actual emissions are lower than what DVLA has on record. Small 124cc engines have a very high pass rate!</span>
+        <span class="zh">💪 據報導，大多數送去測試的車都通過了，因為實際排放比 DVLA 記錄的低。124cc 小排量引擎通過機率很高！</span>
+      </div>
+
+      <div class="result-box ok">
+        <span class="en">✅ <strong>Pass:</strong> The test centre uploads your result to TfL. From the next working day, you are permanently exempt — no more £12.50/day!</span>
+        <span class="zh">✅ <strong>通過測試：</strong> 測試中心直接上傳 TfL 系統，隔天起永久豁免 ULEZ，再也不用付 £12.50/天！</span>
+      </div>
+      <div class="result-box warn">
+        <span class="en">⚠️ <strong>Fail:</strong> Continue adjustments (carburettor, exhaust), then retest for £75 until you pass.</span>
+        <span class="zh">⚠️ <strong>沒通過：</strong> 繼續調整（化油器、排氣系統），再以 £75 重測，直到通過為止。</span>
+      </div>
+    </div>
+
+    <!-- Method 4 -->
+    <div class="method disabled">
+      <div class="method-header">
+        <div class="method-num">4</div>
+        <div>
+          <div class="method-title">
+            <span class="en">Historic Vehicle Exemption (40+ Years Old)</span>
+            <span class="zh">40 年老車豁免</span>
+          </div>
+          <div class="method-cost">
+            <span class="en">Not applicable yet</span>
+            <span class="zh">暫不適用</span>
+          </div>
+        </div>
+      </div>
+      <p class="en">Your bike is from 2003. It will not qualify for the historic vehicle exemption until 2043.</p>
+      <p class="zh">你的車是 2003 年，還差 17 年才到 40 年。2043 年後才適用這個豁免。</p>
+    </div>
+
+  </div>
+
+  <!-- SECTION 4: Action checklist -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-badge">4</span>
+      <span class="en">Action Checklist (In Order)</span>
+      <span class="zh">現在要做的事（按順序）</span>
+    </div>
+
+    <table>
+      <tr>
+        <th>#</th>
+        <th><span class="en">Action</span><span class="zh">行動</span></th>
+        <th><span class="en">Cost</span><span class="zh">費用</span></th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>
+          <span class="en">🚨 Apply for SORN or renew road tax</span>
+          <span class="zh">🚨 申請 SORN 或繳車稅</span>
+          <br/>
+          <a href="https://www.gov.uk/make-a-sorn" target="_blank">gov.uk/make-a-sorn</a>
+          &nbsp;|&nbsp;
+          <a href="https://www.gov.uk/renew-vehicle-tax" target="_blank">gov.uk/renew-vehicle-tax</a>
+        </td>
+        <td><span class="en">Free / £44/yr</span><span class="zh">免費 / £44/年</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>
+          <span class="en">Check your vehicle on TfL</span>
+          <span class="zh">查 TfL 確認你的車牌狀態</span>
+          <br/>
+          <a href="https://tfl.gov.uk/modes/driving/check-your-vehicle/" target="_blank">tfl.gov.uk/modes/driving/check-your-vehicle</a>
+        </td>
+        <td><span class="en">Free</span><span class="zh">免費</span></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>
+          <span class="en">Contact Piaggio UK for CoC document</span>
+          <span class="zh">聯絡 Piaggio UK 要 CoC 文件</span>
+          <br/>
+          📞 <strong>00800 818 29800</strong>
+          <span class="en"> (Mon–Fri 08:00–17:00)</span>
+          <span class="zh">（週一至週五 08:00–17:00）</span>
+          <br/>
+          <a href="https://www.piaggio.com/gb_EN/customer-care/" target="_blank">piaggio.com/gb_EN/customer-care</a>
+        </td>
+        <td>£0–50</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>
+          <span class="en">Basic service: replace spark plug + change oil + tune carburettor</span>
+          <span class="zh">做基本保養：換火星塞 + 換機油 + 調化油器</span>
+        </td>
+        <td><span class="en">Approx. £50–80</span><span class="zh">約 £50–80</span></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>
+          <span class="en">Book emissions test at The Test Centre (Deptford) — only pay if you pass!</span>
+          <span class="zh">去 The Test Centre（Deptford）做排放測試 — 通過才收費！</span>
+          <br/>
+          📞 <strong>0333 358 2666</strong>
+          <br/>
+          <a href="https://www.ulezbiketest.co.uk/" target="_blank">ulezbiketest.co.uk</a>
+        </td>
+        <td><span class="en">£175 (pass only)</span><span class="zh">£175（通過才收）</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="footer">
+    <span class="en">Sources: TfL official website tfl.gov.uk | DVLA vehicleenquiry.service.gov.uk | Bikesure.co.uk (updated August 2025)</span>
+    <span class="zh">資料來源：TfL 官方網站 tfl.gov.uk ｜ DVLA vehicleenquiry.service.gov.uk ｜ Bikesure.co.uk（2025年8月更新）</span>
+  </div>
+
+</div>
+</div><!-- end .content -->
+
+</body>
+</html>
