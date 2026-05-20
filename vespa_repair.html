@@ -56,13 +56,7 @@
     }
 
     /* ── Language visibility ── */
-    [data-lang] { display: none; }
-    body.lang-en  [data-lang="en"]  { display: inline; }
-    body.lang-zh  [data-lang="zh"]  { display: inline; }
-    body.lang-en  [data-lang-block="en"]  { display: block; }
-    body.lang-zh  [data-lang-block="zh"]  { display: block; }
-    body.lang-en  [data-lang-flex="en"]  { display: flex; }
-    body.lang-zh  [data-lang-flex="zh"]  { display: flex; }
+    .lang-hidden { display: none !important; }
 
     /* ── Header ── */
     .header {
@@ -612,7 +606,14 @@
 <script>
   // Language toggle
   function setLang(lang) {
-    document.body.className = 'lang-' + lang;
+    // Hide all lang elements first
+    document.querySelectorAll('[data-lang]').forEach(el => {
+      el.classList.add('lang-hidden');
+    });
+    // Show only the selected language
+    document.querySelectorAll('[data-lang="' + lang + '"]').forEach(el => {
+      el.classList.remove('lang-hidden');
+    });
     document.getElementById('btn-en').classList.toggle('active', lang === 'en');
     document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
     localStorage.setItem('vespa_repair_lang', lang);
