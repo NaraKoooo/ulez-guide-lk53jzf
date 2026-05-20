@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vespa LK53 JZE — Repair Checklist</title>
+  <style>
+    :root {
+      --red: #e74c3c;
+      --orange: #e67e22;
+      --green: #27ae60;
+      --grey: #7f8c8d;
+      --dark: #1a1a2e;
+      --card: #ffffff;
+      --bg: #f4f6f9;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: #2c3e50;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      color: white;
+      padding: 40px 20px 30px;
+      text-align: center;
+    }
+    .header .back-link {
+      display: inline-block;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      transition: color 0.2s;
+    }
+    .header .back-link:hover { color: white; }
+    .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 6px; }
+    .header p { color: rgba(255,255,255,0.75); font-size: 1rem; }
+    .plate-badge {
+      display: inline-block;
+      background: #f9c74f;
+      color: #1a1a2e;
+      font-weight: 800;
+      font-size: 1.3rem;
+      padding: 6px 20px;
+      border-radius: 6px;
+      margin-top: 14px;
+      letter-spacing: 2px;
+    }
+
+    /* ── Photo Gallery ── */
+    .section { max-width: 960px; margin: 0 auto; padding: 30px 20px; }
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .gallery img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .gallery img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    /* ── Priority Sections ── */
+    .priority-block {
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .priority-header {
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: white;
+    }
+    .priority-header.urgent   { background: var(--red); }
+    .priority-header.medium   { background: var(--orange); }
+    .priority-header.low      { background: var(--grey); }
+    .priority-badge {
+      background: rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 2px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .repair-list { list-style: none; padding: 0; }
+    .repair-item {
+      padding: 18px 22px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .repair-item:last-child { border-bottom: none; }
+
+    .item-number {
+      min-width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: white;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .urgent .item-number   { background: var(--red); }
+    .medium .item-number   { background: var(--orange); }
+    .low-item .item-number { background: var(--grey); }
+
+    .item-content { flex: 1; }
+    .item-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    .item-desc {
+      font-size: 0.88rem;
+      color: #555;
+      line-height: 1.5;
+    }
+    .item-cost {
+      display: inline-block;
+      margin-top: 6px;
+      background: #f0f4ff;
+      color: #2563eb;
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .item-diy {
+      display: inline-block;
+      margin-top: 6px;
+      margin-left: 6px;
+      background: #f0fff4;
+      color: #16a34a;
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .item-tech {
+      display: inline-block;
+      margin-top: 6px;
+      margin-left: 6px;
+      background: #fff7ed;
+      color: #ea580c;
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    /* Engine flow diagram */
+    .engine-flow {
+      background: #f8faff;
+      border: 1px solid #dde5ff;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: #444;
+      line-height: 1.9;
+    }
+    .engine-flow .arrow { color: #2563eb; font-weight: 700; }
+    .engine-flow .result-good { color: var(--green); font-weight: 700; }
+    .engine-flow .result-bad  { color: var(--red); font-weight: 700; }
+
+    /* Checkbox */
+    .checkbox-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .checkbox-wrap input[type="checkbox"] {
+      width: 18px; height: 18px; cursor: pointer; accent-color: var(--green);
+    }
+    .checkbox-wrap label { font-size: 0.85rem; color: #666; cursor: pointer; }
+
+    /* Back to guide button */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1a1a2e;
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover { background: #0f3460; }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox img {
+      max-width: 92vw;
+      max-height: 88vh;
+      border-radius: 10px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 20px; right: 28px;
+      color: white;
+      font-size: 2.5rem;
+      cursor: pointer;
+      line-height: 1;
+      opacity: 0.8;
+    }
+    .lightbox-close:hover { opacity: 1; }
+
+    @media (max-width: 600px) {
+      .header h1 { font-size: 1.5rem; }
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <a href="ulez_guide_v4.html" class="back-link">← Back to ULEZ Guide</a>
+  <h1>🔧 Vespa Repair Checklist</h1>
+  <p>2003 Piaggio 124cc — Maintenance & Repair Priority List</p>
+  <div class="plate-badge">LK53 JZE</div>
+</div>
+
+<!-- Photo Gallery -->
+<div class="section">
+  <div class="section-title">📸 Current Condition Photos</div>
+  <div class="gallery">
+    <img src="vespa_full.webp"   alt="Vespa side view" onclick="openLightbox(this)" />
+    <img src="vespa_rear.webp"   alt="Vespa rear view" onclick="openLightbox(this)" />
+    <img src="vespa_front.webp"  alt="Vespa front view" onclick="openLightbox(this)" />
+    <img src="vespa_front2.webp" alt="Vespa front close" onclick="openLightbox(this)" />
+    <img src="vespa_side.webp"   alt="Vespa side close" onclick="openLightbox(this)" />
+    <img src="vespa_side2.webp"  alt="Vespa side angle" onclick="openLightbox(this)" />
+    <img src="vespa_dash.webp"   alt="Dashboard / instruments" onclick="openLightbox(this)" />
+  </div>
+</div>
+
+<!-- 🔴 URGENT -->
+<div class="section" style="padding-top:0">
+  <div class="priority-block">
+    <div class="priority-header urgent">
+      🔴 <span>Urgent — Do First</span>
+      <span class="priority-badge">3 items</span>
+    </div>
+    <ul class="repair-list">
+
+      <!-- Item 1: Engine tune -->
+      <li class="repair-item">
+        <div class="item-number urgent">1</div>
+        <div class="item-content">
+          <div class="item-title">⚙️ Engine Tune — Spark Plug + Oil + Carburettor</div>
+          <div class="item-desc">
+            Engine wear / carbon build-up / carburettor out of tune → NOx rises (possibly 0.20–0.25 g/km).
+            Tuning before the ULEZ emissions test significantly improves pass rate.
+          </div>
+          <div class="engine-flow">
+            <span class="result-bad">引擎老化 / 積碳 / 化油器失調 → NOx 升高（可能 0.20–0.25 g/km）</span><br/>
+            <span class="arrow">↓ 做保養</span><br/>
+            ① 換火星塞（約 £5–15，自己換）<br/>
+            ② 換機油（約 £20–30，自己換）<br/>
+            ③ 調整化油器（約 £30–50，找技師）— <strong>最重要！</strong><br/>
+            <span class="arrow">↓ 調整後</span><br/>
+            <span class="result-good">NOx 降回正常水平（估計 0.05–0.12 g/km）✅</span>
+          </div>
+          <span class="item-cost">① £5–15</span>
+          <span class="item-diy">DIY</span>
+          <span class="item-cost">② £20–30</span>
+          <span class="item-diy">DIY</span>
+          <span class="item-cost">③ £30–50</span>
+          <span class="item-tech">Mechanic</span>
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="c1" />
+            <label for="c1">Completed</label>
+          </div>
+        </div>
+      </li>
+
+      <!-- Item 2: Fuel gauge -->
+      <li class="repair-item">
+        <div class="item-number urgent">2</div>
+        <div class="item-content">
+          <div class="item-title">⛽ Fuel Gauge Indicator — Replace</div>
+          <div class="item-desc">
+            The fuel gauge is not working correctly. Needs replacement to avoid running out of fuel unexpectedly.
+            油表指示壞掉，需要更換，避免不知道油量。
+          </div>
+          <span class="item-cost">Est. £15–40</span>
+          <span class="item-tech">Mechanic</span>
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="c2" />
+            <label for="c2">Completed</label>
+          </div>
+        </div>
+      </li>
+
+      <!-- Item 3: Front left indicator -->
+      <li class="repair-item">
+        <div class="item-number urgent">3</div>
+        <div class="item-content">
+          <div class="item-title">💡 Front Left Indicator Light — Replace</div>
+          <div class="item-desc">
+            The front left indicator light needs replacing. A non-functioning indicator is an MOT failure point and a road safety issue.
+            前面左邊燈照要換，指示燈壞掉會導致 MOT 不過，也是行車安全問題。
+          </div>
+          <span class="item-cost">Est. £5–20</span>
+          <span class="item-diy">DIY possible</span>
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="c3" />
+            <label for="c3">Completed</label>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+
+  <!-- 🟠 NOT URGENT -->
+  <div class="priority-block">
+    <div class="priority-header low">
+      ⚪ <span>Not Urgent — When Budget Allows</span>
+      <span class="priority-badge">4 items</span>
+    </div>
+    <ul class="repair-list">
+
+      <li class="repair-item">
+        <div class="item-number low-item">1</div>
+        <div class="item-content">
+          <div class="item-title">🪑 Seat / Saddle — Replace</div>
+          <div class="item-desc">
+            Current seat is cracked and worn (visible tape repair). Cosmetic issue but worth replacing for comfort and appearance.
+            椅墊已破裂（可見膠帶修補），影響外觀和舒適度，不急但建議更換。
+          </div>
+          <span class="item-cost">Est. £30–80</span>
+          <span class="item-diy">DIY possible</span>
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="c4" />
+            <label for="c4">Completed</label>
+          </div>
+        </div>
+      </li>
+
+      <li class="repair-item">
+        <div class="item-number low-item">2</div>
+        <div class="item-content">
+          <div class="item-title">🛡️ Footboard / Lower Body Panel — Replace</div>
+          <div class="item-desc">
+            The lower body shell / footboard area has damage and wear. Cosmetic repair, not structurally critical.
+            腳下外殼有損壞，純外觀問題，不影響行車安全。
+          </div>
+          <span class="item-cost">Est. £20–60</span>
+          <span class="item-diy">DIY possible</span>
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="c5" />
+            <label for="c5">Completed</label>
+          </div>
+        </div>
+      </li>
+
+      <li class="repair-item">
+        <div class="item-number low-item">3</div>
+        <div class="item-content">
+          <div class="item-title">🔩 Exhaust Pipe — Replace (Rusted)</div>
+          <div class="item-desc">
+            The exhaust pipe is visibly rusted. While not immediately dangerous, a severely rusted exhaust can affect performance and eventually fail MOT.
+            排氣管生鏽，目前不緊急，但嚴重生鏽會影響性能並可能導致 MOT 不過。
+          </div>
+          <span class="item-cost">Est. £40–120</span>
+          <span class="item-tech">Mechanic recommended</span>
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="c6" />
+            <label for="c6">Completed</label>
+          </div>
+        </div>
+      </li>
+
+      <li class="repair-item">
+        <div class="item-number low-item">4</div>
+        <div class="item-content">
+          <div class="item-title">🐝 Vespa Logo / Badge — Replace</div>
+          <div class="item-desc">
+            The Vespa logo badge is missing or damaged. Pure cosmetic — makes the bike look more complete.
+            Vespa 標誌缺失或損壞，純外觀，讓車看起來更完整。
+          </div>
+          <span class="item-cost">Est. £5–15</span>
+          <span class="item-diy">DIY</span>
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="c7" />
+            <label for="c7">Completed</label>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+
+  <!-- Back button -->
+  <a href="ulez_guide_v4.html" class="back-btn">← Back to ULEZ Guide</a>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <span class="lightbox-close" onclick="closeLightbox()">×</span>
+  <img id="lightbox-img" src="" alt="" />
+</div>
+
+<script>
+  function openLightbox(img) {
+    document.getElementById('lightbox-img').src = img.src;
+    document.getElementById('lightbox').classList.add('active');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+  }
+
+  // Persist checkboxes in localStorage
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    const key = 'vespa_' + cb.id;
+    if (localStorage.getItem(key) === 'true') {
+      cb.checked = true;
+      cb.closest('.repair-item').style.opacity = '0.5';
+    }
+    cb.addEventListener('change', () => {
+      localStorage.setItem(key, cb.checked);
+      cb.closest('.repair-item').style.opacity = cb.checked ? '0.5' : '1';
+    });
+  });
+</script>
+
+</body>
+</html>
